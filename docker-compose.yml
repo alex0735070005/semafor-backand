@@ -1,0 +1,39 @@
+version: "3.3"
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: semafor
+    networks:
+      semafor_sync_net:
+        ipv4_address: 172.28.1.1
+  node:
+    container_name: sync_dev_server_container
+    build:
+      context: ./
+      dockerfile: ./src/docker/devServer/Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ".:/app"
+      - "/app/.git"
+      - "~/.ssh/id_rsa:/root/.ssh/id_rsa"
+      - "/app/node_modules"
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    networks:
+      semafor_sync_net:
+        ipv4_address: 172.28.1.2
+networks:
+  semafor_sync_net:
+    name: semafor_sync_net
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

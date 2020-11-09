@@ -1,0 +1,6 @@
+/buildServer
+/nodeServer
+/nginxServer
+docker-compose.yml
+prod.build.sh
+prod.run.sh
